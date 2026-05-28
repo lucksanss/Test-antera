@@ -162,12 +162,13 @@ function initCalc() {
 
     const minusBtn   = row.querySelector('.minus-btn');
     const plusBtn    = row.querySelector('.plus-btn');
-    const qtyEl      = row.querySelector('.qty-display');
+    const qtyEl      = row.querySelector('.qty-input');
     const subtotalEl = row.querySelector('.service-subtotal');
 
     plusBtn.addEventListener('click', () => {
       if (name==='Performance' && calcState[name].qty>=6) return;
       calcState[name].qty++;
+      qtyEl.value = calcState[name].qty;
       updateRow(row, name, qtyEl, subtotalEl);
       updateTotal();
       beep(880);
@@ -175,10 +176,26 @@ function initCalc() {
     minusBtn.addEventListener('click', () => {
       if (calcState[name].qty===0) return;
       calcState[name].qty--;
+      qtyEl.value = calcState[name].qty;
       updateRow(row, name, qtyEl, subtotalEl);
       updateTotal();
       beep(660);
     });
+
+    // Type directly into the box
+    qtyEl.addEventListener('input', () => {
+      let val = parseInt(qtyEl.value, 10);
+      if (isNaN(val) || val < 0) val = 0;
+      if (name==='Performance' && val > 6) val = 6;
+      if (val > 999) val = 999;
+      calcState[name].qty = val;
+      qtyEl.value = val;
+      updateRow(row, name, qtyEl, subtotalEl);
+      updateTotal();
+    });
+
+    // Select all on focus for easy replacement
+    qtyEl.addEventListener('focus', () => qtyEl.select());
   });
 
   el('resetBtn').addEventListener('click', () => { resetCalc(); beep(440,.18,.08); beep(330,.18,.08); });
@@ -193,7 +210,7 @@ function perfSubtotal(qty) {
 
 function updateRow(row, name, qtyEl, subtotalEl) {
   const { qty, price } = calcState[name];
-  qtyEl.textContent = qty;
+  qtyEl.value = qty;
   const sub = name==='Performance' ? perfSubtotal(qty) : qty*price;
   subtotalEl.textContent = fmt(sub);
   row.classList.toggle('active', qty>0);
@@ -237,7 +254,7 @@ function updateTotal() {
 function resetCalc() {
   Object.keys(calcState).forEach(name=>{ calcState[name].qty=0; });
   document.querySelectorAll('.service-row').forEach(row=>{
-    row.querySelector('.qty-display').textContent='0';
+    row.querySelector('.qty-input').textContent='0';
     row.querySelector('.service-subtotal').textContent='$0';
     row.classList.remove('active');
     if (row.dataset.service==='Performance') row.querySelector('.service-price').textContent='$166,000 each';

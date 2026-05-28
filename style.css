@@ -123,8 +123,10 @@ body{font-family:var(--font-body);background:var(--bg-base);color:var(--text-pri
 .qty-btn svg{width:14px;height:14px;pointer-events:none}
 .qty-btn:hover{background:rgba(255,215,0,.12);border-color:var(--yellow-glow);color:var(--yellow);transform:scale(1.08);box-shadow:0 0 12px rgba(255,215,0,.2)}
 .qty-btn:active{transform:scale(.93)}
-.qty-display{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);min-width:28px;text-align:center;transition:var(--transition);letter-spacing:1px}
-.service-row.active .qty-display{color:var(--yellow);text-shadow:0 0 10px var(--yellow-glow)}
+.qty-input{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);width:52px;text-align:center;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 6px;outline:none;transition:var(--transition);letter-spacing:1px;-moz-appearance:textfield}
+.qty-input::-webkit-outer-spin-button,.qty-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qty-input:focus{border-color:var(--yellow-glow);background:rgba(255,215,0,.08);box-shadow:0 0 0 3px rgba(255,215,0,.1);color:var(--yellow)}
+.service-row.active .qty-input{color:var(--yellow);border-color:rgba(255,215,0,.3);text-shadow:0 0 10px var(--yellow-glow)}
 .service-subtotal{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text-muted);min-width:72px;text-align:right;letter-spacing:.5px;transition:var(--transition);flex-shrink:0}
 .service-row.active .service-subtotal{color:var(--yellow);text-shadow:0 0 10px rgba(255,215,0,.4)}
 
