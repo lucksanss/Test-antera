@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antera Mechanic Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader-icon">
+      <svg viewBox="0 0 60 60" fill="none">
+        <path d="M30 5L55 19V41L30 55L5 41V19L30 5Z" stroke="#FFD700" stroke-width="2"/>
+        <path d="M30 20C24.477 20 20 24.477 20 30C20 35.523 24.477 40 30 40C35.523 40 40 35.523 40 30C40 24.477 35.523 20 30 20ZM30 35C27.239 35 25 32.761 25 30C25 27.239 27.239 25 30 25C32.761 25 35 27.239 35 30C35 32.761 32.761 35 30 35Z" fill="#FFD700"/>
+      </svg>
+    </div>
+    <p class="loader-text">INITIALIZING WORKSHOP</p>
+  </div>
+
+  <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+  <div class="auth-screen hidden" id="authScreen">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="19" stroke="#FFD700" stroke-width="1.5"/>
+          <path d="M12 20C12 15.582 15.582 12 20 12C24.418 12 28 15.582 28 20C28 24.418 24.418 28 20 28C15.582 28 12 24.418 12 20Z" stroke="#FFD700" stroke-width="1.5"/>
+          <path d="M20 16V20L23 23" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 8V10M20 30V32M8 20H10M30 20H32" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="auth-title">Antera Mechanic</h1>
+      <p class="auth-subtitle">PRICE CALCULATOR</p>
+      <div class="auth-field">
+        <label>Username</label>
+        <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" />
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" />
+          <button class="pw-toggle" onclick="togglePw('loginPassword',this)" tabindex="-1">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M2 10C2 10 5 4 10 4C15 4 18 10 18 10C18 10 15 16 10 16C5 16 2 10 2 10Z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="auth-error" id="loginError"></div>
+      <button class="btn-auth" onclick="handleLogin()">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 10H17M17 10L12 5M17 10L12 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Sign In
+      </button>
+      <p class="auth-footer-note">FiveM RP &mdash; Antera Mechanic</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MECHANIC APP ═══════════════ -->
+  <main class="app hidden" id="app">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-avatar" id="topbarAvatar">?</div>
+        <div class="topbar-info">
+          <span class="topbar-name" id="topbarName">Mechanic</span>
+          <span class="topbar-role">Mechanic</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" onclick="handleLogout()" title="Logout">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M7 3H4C3.448 3 3 3.448 3 4V16C3 16.552 3.448 17 4 17H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 7L17 10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <header class="header">
+      <div class="header-badge">FiveM RP</div>
+      <div class="header-logo">
+        <svg class="header-icon" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="19" stroke="#FFD700" stroke-width="1.5"/>
+          <path d="M12 20C12 15.582 15.582 12 20 12C24.418 12 28 15.582 28 20C28 24.418 24.418 28 20 28C15.582 28 12 24.418 12 20Z" stroke="#FFD700" stroke-width="1.5"/>
+          <path d="M20 16V20L23 23" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 8V10M20 30V32M8 20H10M30 20H32" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="header-text">
+          <h1 class="header-title">Antera Mechanic</h1>
+          <span class="header-subtitle">PRICE CALCULATOR</span>
+        </div>
+      </div>
+      <div class="header-divider"></div>
+    </header>
+
+    <div class="calculator-card">
+      <div class="section-divider"><span>SERVICES</span></div>
+      <section class="services-section" id="servicesList">
+
+        <div class="service-row" data-service="Repair Kit" data-price="2500">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Repair Kit</span><span class="service-price">$2,500 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Cleaning Kit" data-price="1500">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v5M14 11v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Cleaning Kit</span><span class="service-price">$1,500 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row service-premium" data-service="Performance" data-price="166000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Performance</span><span class="service-price">$166,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Respray" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/><path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M22 2L13 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Respray</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Tyre Smoke Kit" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4.93 4.93L8.1 8.1M15.9 15.9L19.07 19.07M19.07 4.93L15.9 8.1M8.1 15.9L4.93 19.07" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Tyre Smoke Kit</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Cosmetic" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Cosmetic</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Lighting" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18H15M10 22H14M12 2V4M4.22 4.22L5.64 5.64M2 12H4M20 12H22M18.36 5.64L19.78 4.22M12 6C8.686 6 6 8.686 6 12C6 14.971 7.999 17.48 10.757 18.243C11.149 18.347 11.571 18.4 12 18.4C12.429 18.4 12.851 18.347 13.243 18.243C16.001 17.48 18 14.971 18 12C18 8.686 15.314 6 12 6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Lighting</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Extras Kit" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Extras Kit</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+        <div class="service-row" data-service="Vehicle Wheel" data-price="10000">
+          <div class="service-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 2V9M12 15V22M2 12H9M15 12H22M4.93 4.93L9.17 9.17M14.83 14.83L19.07 19.07M19.07 4.93L14.83 9.17M9.17 14.83L4.93 19.07" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="service-info"><span class="service-name">Vehicle Wheel</span><span class="service-price">$10,000 each</span></div>
+          <div class="service-controls">
+            <button class="qty-btn minus-btn" aria-label="Decrease"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <span class="qty-display">0</span>
+            <button class="qty-btn plus-btn" aria-label="Increase"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="service-subtotal">$0</div>
+        </div>
+
+      </section>
+
+      <section class="total-section">
+        <div class="total-label">TOTAL ESTIMATE</div>
+        <div class="total-amount" id="totalAmount">$0</div>
+        <div class="total-subtext" id="totalSubtext">No services selected</div>
+      </section>
+
+      <div class="actions">
+        <button class="btn btn-reset" id="resetBtn">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10C4 6.686 6.686 4 10 4C12.21 4 14.144 5.168 15.25 6.9L15 8H18L17 5C15.606 2.997 13.452 2 10 2C5.582 2 2 5.582 2 10C2 14.418 5.582 18 10 18C13.452 18 15.606 16.003 17 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Reset
+        </button>
+        <button class="btn btn-copy" id="copyBtn">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="10" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M13 7V5C13 3.895 12.105 3 11 3H5C3.895 3 3 3.895 3 5V13C3 14.105 3.895 15 5 15H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Copy Summary
+        </button>
+      </div>
+
+      <div class="toast" id="toast">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 4.5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Copied to clipboard!
+      </div>
+    </div>
+
+    <div class="sticky-bar" id="stickyBar">
+      <span class="sticky-label">Total</span>
+      <span class="sticky-total" id="stickyTotal">$0</span>
+    </div>
+    <footer class="footer">Antera Mechanic Calculator &mdash; FiveM RP &copy; 2025</footer>
+  </main>
+
+  <!-- ═══════════════ ADMIN DASHBOARD ═══════════════ -->
+  <main class="admin hidden" id="adminDashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-avatar admin-avatar">A</div>
+        <div class="topbar-info">
+          <span class="topbar-name">Scott Mikaelson</span>
+          <span class="topbar-role admin-role">Administrator</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" onclick="handleLogout()" title="Logout">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M7 3H4C3.448 3 3 3.448 3 4V16C3 16.552 3.448 17 4 17H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 7L17 10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Admin Dashboard</h1>
+          <p class="admin-sub">Antera Mechanic — Usage Overview</p>
+        </div>
+        <div class="admin-date" id="adminDate"></div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="admin-summary" id="adminSummary">
+        <div class="summary-card">
+          <span class="summary-number" id="summTotal">—</span>
+          <span class="summary-label">Total Uses Today</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-number" id="summMechs">—</span>
+          <span class="summary-label">Active Mechanics</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-number" id="summAllTime">—</span>
+          <span class="summary-label">All-Time Uses</span>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('usage',this)">Usage Stats</button>
+        <button class="admin-tab" onclick="switchAdminTab('mechanics',this)">Manage Mechanics</button>
+      </div>
+
+      <!-- Usage Stats Tab -->
+      <div id="tabUsage">
+        <div class="admin-section-title">
+          Product Usage — All Mechanics
+          <button class="btn-refresh" onclick="loadAdminData()">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8C2 4.686 4.686 2 8 2C10.21 2 12.144 3.168 13.25 4.9L13 6H15L14 3C12.606 1.497 10.452 1 8 1C4.134 1 1 4.134 1 8C1 11.866 4.134 15 8 15C10.452 15 12.606 13.503 14 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div id="usageTableWrap" class="table-wrap">
+          <div class="admin-loading" id="usageLoading">Loading stats...</div>
+          <table class="usage-table hidden" id="usageTable">
+            <thead>
+              <tr>
+                <th>Mechanic</th>
+                <th>Repair Kit</th>
+                <th>Cleaning Kit</th>
+                <th>Performance</th>
+                <th>Respray</th>
+                <th>Tyre Smoke</th>
+                <th>Cosmetic</th>
+                <th>Lighting</th>
+                <th>Extras Kit</th>
+                <th>Veh. Wheel</th>
+                <th>Total Uses</th>
+                <th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="usageTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section-title" style="margin-top:28px">Top Services Today</div>
+        <div class="stats-bars" id="adminServiceBars"></div>
+      </div>
+
+      <!-- Manage Mechanics Tab -->
+      <div id="tabMechanics" class="hidden">
+        <div class="admin-section-title">Add New Mechanic</div>
+        <div class="add-mech-form">
+          <input type="text" id="newMechUser" placeholder="Username" maxlength="20" />
+          <input type="password" id="newMechPass" placeholder="Password" />
+          <button class="btn-add-mech" onclick="addMechanic()">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Add
+          </button>
+        </div>
+        <div class="mech-form-error" id="mechFormError"></div>
+
+        <div class="admin-section-title" style="margin-top:24px">Active Mechanics</div>
+        <div id="mechListWrap">
+          <div class="admin-loading" id="mechLoading">Loading mechanics...</div>
+          <div id="mechList"></div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
