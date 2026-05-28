@@ -176,6 +176,10 @@ body{font-family:var(--font-body);background:var(--bg-base);color:var(--text-pri
 .admin-tab:not(.active):hover{color:var(--text-primary);background:rgba(255,255,255,.06)}
 
 .admin-section-title{font-family:var(--font-display);font-size:13px;letter-spacing:3px;color:var(--yellow);opacity:.7;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.btn-export{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius-sm);border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.08);color:var(--yellow);font-family:var(--font-body);font-size:11px;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap}
+.btn-export svg{width:12px;height:12px}
+.btn-export:hover{background:rgba(255,215,0,.18);border-color:var(--yellow);box-shadow:0 0 12px rgba(255,215,0,.2)}
+.btn-export:disabled{opacity:.5;cursor:not-allowed}
 .btn-refresh{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-secondary);font-family:var(--font-body);font-size:11px;cursor:pointer;transition:var(--transition)}
 .btn-refresh svg{width:12px;height:12px}
 .btn-refresh:hover{border-color:var(--yellow-glow);color:var(--yellow);background:rgba(255,215,0,.06)}

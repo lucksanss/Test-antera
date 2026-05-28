@@ -60,7 +60,7 @@
         <svg viewBox="0 0 20 20" fill="none"><path d="M3 10H17M17 10L12 5M17 10L12 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Sign In
       </button>
-      <p class="auth-footer-note">FiveM RP &mdash; Antera Mechanic</p>
+      <p class="auth-footer-note">Ascend RP &mdash; Antera Mechanic</p>
     </div>
   </div>
 
@@ -82,7 +82,7 @@
     </div>
 
     <header class="header">
-      <div class="header-badge">FiveM RP</div>
+      <div class="header-badge">Ascend RP</div>
       <div class="header-logo">
         <svg class="header-icon" viewBox="0 0 40 40" fill="none">
           <circle cx="20" cy="20" r="19" stroke="#FFD700" stroke-width="1.5"/>
@@ -230,7 +230,7 @@
       <span class="sticky-label">Total</span>
       <span class="sticky-total" id="stickyTotal">$0</span>
     </div>
-    <footer class="footer">Antera Mechanic Calculator &mdash; FiveM RP &copy; 2025</footer>
+    <footer class="footer">Antera Mechanic Calculator &mdash; Ascend RP &copy; 2025</footer>
   </main>
 
   <!-- ═══════════════ ADMIN DASHBOARD ═══════════════ -->
@@ -239,8 +239,8 @@
       <div class="topbar-left">
         <div class="topbar-avatar admin-avatar">A</div>
         <div class="topbar-info">
-          <span class="topbar-name">Scott Mikaelson</span>
-          <span class="topbar-role admin-role">Administrator</span>
+          <span class="topbar-name">Antera Admin</span>
+          <span class="topbar-role admin-role">Antera Admin</span>
         </div>
       </div>
       <div class="topbar-right">
@@ -285,10 +285,16 @@
       <div id="tabUsage">
         <div class="admin-section-title">
           Product Usage — All Mechanics
-          <button class="btn-refresh" onclick="loadAdminData()">
-            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8C2 4.686 4.686 2 8 2C10.21 2 12.144 3.168 13.25 4.9L13 6H15L14 3C12.606 1.497 10.452 1 8 1C4.134 1 1 4.134 1 8C1 11.866 4.134 15 8 15C10.452 15 12.606 13.503 14 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Refresh
-          </button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn-refresh" onclick="loadAdminData()">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 8C2 4.686 4.686 2 8 2C10.21 2 12.144 3.168 13.25 4.9L13 6H15L14 3C12.606 1.497 10.452 1 8 1C4.134 1 1 4.134 1 8C1 11.866 4.134 15 8 15C10.452 15 12.606 13.503 14 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Refresh
+            </button>
+            <button class="btn-export" onclick="exportExcel()" id="exportBtn">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12H14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="11" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+              Export Excel
+            </button>
+          </div>
         </div>
         <div id="usageTableWrap" class="table-wrap">
           <div class="admin-loading" id="usageLoading">Loading stats...</div>

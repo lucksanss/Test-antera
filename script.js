@@ -8,8 +8,8 @@
 const SUPABASE_URL = 'https://mgvmzssfpxoizjkzncmo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndm16c3NmcHhvaXpqa3puY21vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDIzNzUsImV4cCI6MjA5NTQ3ODM3NX0._Vf3Be1ghASBFjihz8otAWnOKnEBc6c_TQMn6NYMD3A';
 
-const ADMIN_USER = 'scott';
-const ADMIN_PASS = 'scott123';
+const ADMIN_USER = 'antera';
+const ADMIN_PASS = 'antera';
 
 const SERVICES = [
   'Repair Kit','Cleaning Kit','Performance','Respray',
@@ -101,7 +101,7 @@ window.handleLogin = async function() {
 
   // Admin shortcut
   if (username === ADMIN_USER && password === ADMIN_PASS) {
-    currentUser = { username: 'scott', isAdmin: true };
+    currentUser = { username: 'antera', isAdmin: true };
     enterAdmin();
     return;
   }
@@ -503,6 +503,94 @@ window.deleteMechanic = async function(username) {
     loadMechList();
   } catch(e) { alert('Failed to delete.'); console.error(e); }
 };
+
+
+/* ══════════════════════════════════════════════════════════
+   EXPORT TO EXCEL
+══════════════════════════════════════════════════════════ */
+window.exportExcel = async function() {
+  const btn = el('exportBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12H14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Exporting...';
+
+  try {
+    const logs  = await sb('GET','usage_logs?select=username,date,service,qty,created_at&order=created_at.desc');
+    const mechs = await sb('GET','mechanics?select=username,created_at&order=created_at.asc');
+
+    // ── Sheet 1: Per-mechanic summary ──────────────────────
+    const mechNames = mechs.map(m => m.username);
+    logs.forEach(l => { if (!mechNames.includes(l.username)) mechNames.push(l.username); });
+
+    const summary = {};
+    mechNames.forEach(u => {
+      summary[u] = {};
+      SERVICES.forEach(s => summary[u][s] = 0);
+      summary[u]._total = 0;
+      summary[u]._last  = '—';
+    });
+    logs.forEach(l => {
+      if (!summary[l.username]) return;
+      summary[l.username][l.service] = (summary[l.username][l.service] || 0) + l.qty;
+      summary[l.username]._total     = (summary[l.username]._total || 0) + l.qty;
+      if (summary[l.username]._last === '—' || l.date > summary[l.username]._last)
+        summary[l.username]._last = l.date;
+    });
+
+    const sheet1 = [
+      ['Mechanic', ...SERVICES, 'Total Uses', 'Last Active']
+    ];
+    mechNames.sort().forEach(u => {
+      sheet1.push([u, ...SERVICES.map(s => summary[u][s] || 0), summary[u]._total || 0, summary[u]._last]);
+    });
+
+    // ── Sheet 2: Raw usage log ─────────────────────────────
+    const sheet2 = [['Date', 'Mechanic', 'Service', 'Quantity', 'Logged At']];
+    logs.forEach(l => {
+      sheet2.push([l.date, l.username, l.service, l.qty, new Date(l.created_at).toLocaleString('en-GB')]);
+    });
+
+    // ── Build .xlsx manually (simple XML-based) ────────────
+    buildAndDownloadXLSX(sheet1, sheet2);
+
+  } catch(e) {
+    alert('Export failed. Please try again.');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12H14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1" y="11" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/></svg> Export Excel';
+  }
+};
+
+function buildAndDownloadXLSX(sheet1, sheet2) {
+  // Use SheetJS via CDN loaded dynamically
+  if (window.XLSX) {
+    doExport(sheet1, sheet2);
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => doExport(sheet1, sheet2);
+  script.onerror = () => alert('Could not load Excel library. Check your connection.');
+  document.head.appendChild(script);
+}
+
+function doExport(sheet1, sheet2) {
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1 — Summary
+  const ws1 = XLSX.utils.aoa_to_sheet(sheet1);
+  // Style header row width
+  ws1['!cols'] = sheet1[0].map((_, i) => ({ wch: i === 0 ? 18 : 14 }));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Usage Summary');
+
+  // Sheet 2 — Raw Logs
+  const ws2 = XLSX.utils.aoa_to_sheet(sheet2);
+  ws2['!cols'] = [{ wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 22 }];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Raw Logs');
+
+  const date = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `antera-mechanic-stats-${date}.xlsx`);
+}
 
 /* ══════════════════════════════════════════════════════════
    BOOT
